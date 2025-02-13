@@ -39,7 +39,7 @@ npx nodekick
 
 ## Templates
 
-- [Blank](https://github.com/Federico-Pena/nodekick/tree/master/templates/balnk)
+- [Blank](https://github.com/Federico-Pena/nodekick/tree/master/templates/blank)
 - [Express API](https://github.com/Federico-Pena/nodekick/tree/master/templates/api)
 
 ## Contributing
