@@ -1,9 +1,20 @@
 {
   "name": "nodekick",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
+  "license": "MIT",
+  "author": "ChifoDev",
+  "description": "Cli for generate node proyects, with TypeScript or JavaScript, eslint, prettier and esbuild config. You must install eslint and prettier extension.",
+  "keywords": [
+    "express",
+    "API",
+    "template",
+    "cli",
+    "typescript",
+    "javascript"
+  ],
   "bin": {
     "nodekick": "dist/index.js"
   },
@@ -23,17 +34,6 @@
     "lint": "eslint ./src",
     "start": "node dist/index.js"
   },
-  "keywords": [
-    "express",
-    "API",
-    "template",
-    "cli",
-    "typescript",
-    "javascript"
-  ],
-  "author": "",
-  "license": "ISC",
-  "description": "Cli for generate node proyects, with TypeScript or JavaScript, eslint, prettier and esbuild config. You must install eslint and prettier extension.",
   "devDependencies": {
     "@types/node": "^22.10.10",
     "esbuild": "^0.24.2",
