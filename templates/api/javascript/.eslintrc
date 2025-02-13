@@ -1,0 +1,9 @@
+{
+  "extends": "./node_modules/eslint-config-standard/.eslintrc.json",
+  "rules": {
+    "semi": "error",
+    "quotes": "error",
+    "comma-dangle": "error",
+    "no-unused-vars": "warn"
+  }
+}

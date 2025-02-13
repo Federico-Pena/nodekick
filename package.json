@@ -1,0 +1,49 @@
+{
+  "name": "nodekick",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "bin": {
+    "nodekick": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "scripts": {
+    "prepare": "run-p build:*",
+    "test": "vitest",
+    "dev:esbuild": "node --env-file .env esbuild.config.js",
+    "dev:node": "node --watch --env-file .env out/index.js",
+    "dev": "run-p dev:*",
+    "build:tsc": "tsc",
+    "build:esbuild": "node esbuild.config.js",
+    "build": "run-p build:*",
+    "lint": "eslint ./src",
+    "start": "node dist/index.js"
+  },
+  "keywords": [
+    "express",
+    "API",
+    "template",
+    "cli",
+    "typescript",
+    "javascript"
+  ],
+  "author": "",
+  "license": "ISC",
+  "description": "Cli for generate node proyects, with TypeScript or JavaScript, eslint, prettier and esbuild config. You must install eslint and prettier extension.",
+  "devDependencies": {
+    "@types/node": "^22.10.10",
+    "esbuild": "^0.24.2",
+    "npm-run-all": "^4.1.5",
+    "standard": "^17.1.2",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.4"
+  },
+  "dependencies": {
+    "inquirer": "^10.0.1",
+    "logpainter": "^0.0.3"
+  }
+}
