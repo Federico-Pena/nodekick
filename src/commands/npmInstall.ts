@@ -32,8 +32,8 @@ const npmInstall = (
     }
 
     if (installDependencies) {
-      consoleStyler('Installing dependencies', {
-        emojiStart: 'information',
+      consoleStyler('Installing Node dependencies', {
+        emojiStart: 'hourglass_not_done',
         bold: true
       })
       execSync('npm install', { stdio: 'inherit', cwd: projectDir })
@@ -43,6 +43,10 @@ const npmInstall = (
         bold: true
       })
       if (templateApiAndFrontend) {
+        consoleStyler('Installing Vite dependencies', {
+          emojiStart: 'hourglass_not_done',
+          bold: true
+        })
         const viteFolder = viteProjectName
           ? path.join(frontendPath, viteProjectName)
           : frontendPath

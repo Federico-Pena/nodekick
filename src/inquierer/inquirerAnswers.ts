@@ -59,7 +59,7 @@ const inquirerAnswers: InquirerAnswers = async () => {
       viteName
     }
   } catch (error) {
-    throw new CustomError('Failed to get inquirer answers', 'INQUIRER_ERROR')
+    throw new CustomError('Failed to get answers from user', 'INQUIRER_ERROR')
   }
 }
 

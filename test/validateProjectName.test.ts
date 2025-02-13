@@ -23,14 +23,18 @@ describe('validateProjectName', () => {
   })
 
   it('should throw INVALID_DIRECTORY_NAME_ERROR for invalid folder names', async () => {
-    const invalidNames = ['invalid/name', '   ', 'con<>']
+    const invalidNames = [
+      'invalid/name',
+      '   ',
+      'con<>',
+      'proyect 1',
+      'new_(proyect)',
+      'invalid_name'
+    ]
 
     for (const name of invalidNames) {
       await expect(validateProjectName(name)).rejects.toThrowError(
-        new CustomError(
-          'Invalid directory name!',
-          'INVALID_DIRECTORY_NAME_ERROR'
-        )
+        new CustomError('Invalid project name!', 'INVALID_DIRECTORY_NAME_ERROR')
       )
     }
   })

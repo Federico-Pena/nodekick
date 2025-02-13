@@ -7,7 +7,7 @@ const isValidFolderName = (name: string): boolean => {
     return true
   }
   const validFolderNameRegex =
-    /^[^\s^\x00-\x1f\\?*:"";<>|\/.][^\x00-\x1f\\?*:"";<>|\/]*[^\s^\x00-\x1f\\?*:"";<>|\/.]+$/g
+    /^(?!node_modules$|favicon\.ico$)([a-z0-9]+(?:[-\.][a-z0-9]+)*){1,214}$/
 
   return validFolderNameRegex.test(name)
 }
@@ -26,7 +26,7 @@ const validateProjectName = async (projectName: string) => {
 
     if (!isValidFolderName(projectName)) {
       throw new CustomError(
-        'Invalid directory name!',
+        'Invalid project name!',
         'INVALID_DIRECTORY_NAME_ERROR'
       )
     }

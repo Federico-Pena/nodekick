@@ -2,7 +2,7 @@
 
 ![NPM Version](https://img.shields.io/npm/v/nodekick?color=blue&label=version&logo=npm)
 ![Downloads](https://img.shields.io/npm/dt/nodekick?logo=npm)
-![License](https://img.shields.io/github/license/Federico-Pena/nodekick)
+![License](https://img.shields.io/github/license/Federico-Pena/nodekick?style=flat&logo=github)
 ![TypeScript](https://img.shields.io/badge/TypeScript-Supported-blue?logo=typescript)
 ![GitHub stars](https://img.shields.io/github/stars/Federico-Pena/nodekick?style=social)
 
