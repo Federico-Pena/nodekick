@@ -2,11 +2,11 @@
 
 import { CustomError } from './errors/CustomError.js'
 import inquirerAnswers from './inquierer/inquirerAnswers.js'
-import validateProjectName from './utils/validateProjectName.js'
+import { validateProjectName } from './utils/validateProjectName.js'
 import copyTemplate from './commands/copyTemplate.js'
-import updatePackageJson from './commands/updatePackageJson.js'
 import npmInstall from './commands/npmInstall.js'
-import { consoleStyler } from 'logpainter'
+import { consoleLoader, consoleStyler } from 'logpainter'
+import { successMessage } from './utils/successMessage.js'
 ;(async () => {
   try {
     const { projectName, language, template, installDependencies, viteName } =
@@ -15,24 +15,42 @@ import { consoleStyler } from 'logpainter'
     const projectDir = await validateProjectName(projectName)
 
     const start = performance.now()
-    await copyTemplate(language, template, projectDir)
-    await updatePackageJson(projectDir, projectName)
-    consoleStyler('Project copied successfully', {
-      color: 'green',
-      emojiStart: 'check_mark_button',
-      bold: true
-    })
-    npmInstall(projectDir, template, installDependencies, viteName)
+
+    await consoleLoader(
+      copyTemplate(language, template, projectDir, viteName),
+      {
+        message: 'Copying template...',
+        finishMessage: 'Template copied successfully',
+        emojiStart: 'hourglass_not_done',
+        bold: true
+      }
+    )
+
+    if (installDependencies) {
+      await consoleLoader(
+        npmInstall(projectDir, template, installDependencies, viteName),
+        {
+          message: 'Installing dependencies...',
+          finishMessage: installDependencies
+            ? 'Dependencies installed successfully!'
+            : '',
+          color: 'green',
+          bold: true
+        }
+      )
+    }
+
     const end = performance.now()
-    const duration = ((end - start) / 1000).toFixed(2)
-    console.log()
-    consoleStyler(`Proyect ready in ${duration} seconds!`, {
-      color: 'green',
-      emojiStart: 'check_mark_button',
-      bold: true
-    })
-    console.log()
-    consoleStyler('Happy coding!')
+    const duration = parseInt(((end - start) / 1000).toFixed(2))
+    process.stdout.write('\x1Bc')
+    const withVite = template === 'expressApi + Frontend'
+    successMessage(
+      installDependencies,
+      projectName,
+      viteName,
+      duration,
+      withVite
+    )
   } catch (error: any) {
     if (error instanceof CustomError) {
       consoleStyler(error.message, {

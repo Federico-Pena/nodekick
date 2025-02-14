@@ -1,68 +1,34 @@
-import { execSync } from 'node:child_process'
 import { CustomError } from '../errors/CustomError.js'
-import { existsSync, mkdirSync } from 'node:fs'
+import { exec } from 'node:child_process'
 import path from 'node:path'
-import { consoleStyler } from 'logpainter'
-
-const npmInstall = (
+import util from 'node:util'
+const execAsync = util.promisify(exec)
+const npmInstall = async (
   projectDir: string,
   template: string,
   installDependencies: boolean,
   viteProjectName = ''
 ) => {
   try {
-    const frontendPath = path.join(projectDir, 'public')
+    const frontendPath = path.join(
+      projectDir,
+      viteProjectName.length > 0 ? viteProjectName : 'frontend'
+    )
+    const backendPath = path.join(projectDir, 'backend')
     const templateApiAndFrontend = template === 'expressApi + Frontend'
-
-    if (templateApiAndFrontend) {
-      if (!existsSync(frontendPath)) {
-        mkdirSync(frontendPath, { recursive: true })
-      }
-
-      const viteCommand =
-        viteProjectName.trim().length > 0
-          ? `npm create vite@latest ${viteProjectName}`
-          : `npm create vite@latest .`
-
-      execSync(viteCommand, {
-        stdio: 'inherit',
-        cwd: frontendPath
-      })
-      process.stdout.write('\x1Bc')
-    }
-
     if (installDependencies) {
-      consoleStyler('Installing Node dependencies', {
-        emojiStart: 'hourglass_not_done',
-        bold: true
-      })
-      execSync('npm install', { stdio: 'inherit', cwd: projectDir })
-      consoleStyler('Node dependencies installed', {
-        color: 'green',
-        emojiStart: 'check_mark_button',
-        bold: true
-      })
+      await execAsync('npm install', { cwd: backendPath })
+
       if (templateApiAndFrontend) {
-        consoleStyler('Installing Vite dependencies', {
-          emojiStart: 'hourglass_not_done',
-          bold: true
-        })
-        const viteFolder = viteProjectName
-          ? path.join(frontendPath, viteProjectName)
-          : frontendPath
-        execSync('npm install', { stdio: 'inherit', cwd: viteFolder })
-        consoleStyler('Vite dependencies installed', {
-          color: 'green',
-          emojiStart: 'check_mark_button',
-          bold: true
-        })
+        await execAsync('npm install', { cwd: frontendPath })
       }
     }
   } catch (error) {
-    throw new CustomError(
-      'Failed to change directory or install dependencies',
+    const customError = new CustomError(
+      'Failed installing dependencies',
       'INSTALL_DEPENDENCIES_ERROR'
     )
+    throw customError
   }
 }
 

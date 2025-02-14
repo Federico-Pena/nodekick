@@ -2,7 +2,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { CustomError } from '../errors/CustomError.js'
 
-const isValidFolderName = (name: string): boolean => {
+export const isValidFolderName = (name: string): boolean => {
   if (name.length === 0) {
     return true
   }
@@ -12,7 +12,7 @@ const isValidFolderName = (name: string): boolean => {
   return validFolderNameRegex.test(name)
 }
 
-const validateProjectName = async (projectName: string) => {
+export const validateProjectName = async (projectName: string) => {
   try {
     const currentDir = process.cwd()
     const projectDir = path.resolve(currentDir, projectName)
@@ -44,4 +44,3 @@ const validateProjectName = async (projectName: string) => {
     }
   }
 }
-export default validateProjectName

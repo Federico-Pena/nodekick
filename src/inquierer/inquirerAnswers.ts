@@ -1,6 +1,7 @@
 import inquirer from 'inquirer'
 import type { InquirerAnswers } from '../types.js'
 import { CustomError } from '../errors/CustomError.js'
+import { isValidFolderName } from '../utils/validateProjectName.js'
 
 const inquirerAnswers: InquirerAnswers = async () => {
   try {
@@ -8,7 +9,13 @@ const inquirerAnswers: InquirerAnswers = async () => {
       {
         type: 'input',
         name: 'projectName',
-        message: 'Project name (leave empty to use the current directory)'
+        message: 'Project name (leave empty to use the current directory)',
+        validate: (value) => {
+          if (!isValidFolderName(value)) {
+            return 'Project name is invalid'
+          }
+          return true
+        }
       },
       {
         type: 'list',
@@ -39,7 +46,13 @@ const inquirerAnswers: InquirerAnswers = async () => {
         {
           type: 'input',
           name: 'viteProjectName',
-          message: 'Vite project name (leave empty to use the public folder)'
+          message: 'Vite project name (leave empty to use the frontend folder)',
+          validate: (value) => {
+            if (value.trim() === 'backend') {
+              return 'Vite project name cannot be backend'
+            }
+            return true
+          }
         }
       ])
       viteName = viteProjectName

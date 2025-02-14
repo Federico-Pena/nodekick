@@ -24,10 +24,13 @@ if (NODE_ENV === 'development') {
     .build({
       entryPoints: ['src/index.ts'],
       outfile: 'dist/index.js',
+      bundle: true,
       minify: true,
       platform: 'node',
       format: 'esm',
-      external: ['express', 'cors', 'node:path']
+      banner: {
+        js: 'import { createRequire } from "node:module"; const require = createRequire(import.meta.url);'
+      }
     })
     .then(() => {
       console.log('Build successful')

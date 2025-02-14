@@ -3,6 +3,7 @@ import fs from 'fs/promises'
 import { CustomError } from '../errors/CustomError.js'
 import { fileURLToPath } from 'node:url'
 import type { Answers } from '../types.js'
+import { initVite } from './initVite.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -10,25 +11,16 @@ const __dirname = path.dirname(__filename)
 const copyTemplate = async (
   language: Answers['language'],
   template: Answers['template'],
-  destDir: string
+  destDir: string,
+  viteName: string
 ): Promise<void> => {
   try {
-    let templateFolder = ''
-    let templateLenguage = ''
+    const templateFolder = template === 'blank' ? 'blank' : 'api'
+    const templateLenguage =
+      language === 'TypeScript' ? 'typescript' : 'javascript'
+
     const templateApiAndFrontend = template === 'expressApi + Frontend'
 
-    if (template === 'blank') {
-      templateFolder = 'blank'
-    }
-    if (template === 'expressApi' || templateApiAndFrontend) {
-      templateFolder = 'api'
-    }
-    if (language === 'TypeScript') {
-      templateLenguage = 'typescript'
-    }
-    if (language === 'JavaScript') {
-      templateLenguage = 'javascript'
-    }
     const srcDir = path.join(
       __dirname,
       '..',
@@ -44,7 +36,7 @@ const copyTemplate = async (
     for (const entry of entries) {
       const srcPath = path.join(srcDir, entry.name)
       const destPath = path.join(destDir, entry.name)
-      if (templateApiAndFrontend && entry.name === 'public') {
+      if (templateApiAndFrontend && entry.name === 'frontend') {
         skippedPublic = true
         continue
       }
@@ -53,11 +45,15 @@ const copyTemplate = async (
     if (skippedPublic) {
       const appFilePath = path.join(
         destDir,
+        'backend',
         'src',
         'app',
         `${language === 'JavaScript' ? 'app.js' : 'app.ts'}`
       )
-      await updateTemplateFilesToVite(appFilePath, language)
+      await updateTemplateFilesToVite(appFilePath, language, viteName)
+    }
+    if (template === 'expressApi + Frontend') {
+      initVite(destDir, viteName)
     }
   } catch (error) {
     throw new CustomError('Error copying files.', 'COPY_TEMPLATE_ERROR')
@@ -66,33 +62,32 @@ const copyTemplate = async (
 
 const updateTemplateFilesToVite = async (
   appFilePath: string,
-  language: Answers['language']
+  language: Answers['language'],
+  viteName: string
 ) => {
   try {
     let appFileContent = await fs.readFile(appFilePath, 'utf8')
-
-    const expressStaticLine = `// app.use(express.static(path.resolve('./public/dist')));`
-
-    const expressError404Line = `// app.get('*', ${
+    const expressStaticPath = `path.join(cwd(),"../", '${
+      viteName.trim().length > 0 ? viteName : 'frontend'
+    }', "dist")`
+    const expressError404Line = `app.get('*', ${
       language === 'JavaScript' ? '(req, res)' : '(req: Request, res: Response)'
     } => {
-// res.sendFile(path.resolve('./public/dist/index.html'));
-// })`
+res.sendFile(path.join(staticPath, 'index.html'))
+})`
 
     let lines = appFileContent.split('\n')
     lines = lines.map((line) => {
-      if (line.includes('express.static')) {
-        return line.replace(line, expressStaticLine)
-      }
       if (line.includes("app.use('*',")) {
         return line.replace(line, expressError404Line)
       }
-      if (line.includes('404.html')) {
+      if (line.includes('const staticPath')) {
+        return line.replace(line, `const staticPath = ${expressStaticPath}`)
+      }
+      if (line.includes('404.html') || line.includes('})')) {
         return line.replace(line, '')
       }
-      if (line.includes('})')) {
-        return line.replace(line, '')
-      }
+
       return line
     })
 
